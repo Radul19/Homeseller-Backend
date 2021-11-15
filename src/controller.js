@@ -2,7 +2,8 @@ const db = require("./database")
 const bcrypt = require("bcrypt")
 const { v4 } = require('uuid');
 const fs = require('fs')
-const urlServer = "localhost:4000/"
+// const urlServer = "localhost:4000/"
+const urlServer = "home-seller-back.herokuapp.com/"
 
 /// const result = await db.query('SELECT * FROM users WHERE id = $1', [id])
 /// res.send(result.rows[0])
