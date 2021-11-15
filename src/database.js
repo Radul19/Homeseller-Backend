@@ -14,9 +14,9 @@ const config = {
     password: "3ef1d753908f01ad91990def65c06d3a93d91326060645ca1c716bb469d6a3cb",
     database: 'ddfq44vngru7o5',
     port:'5432',
-    ssl: {
-    rejectUnauthorized: false,
-  },
+//     ssl: {
+//     rejectUnauthorized: false,
+//   },
 }
 
 const pool = new Pool(config)
