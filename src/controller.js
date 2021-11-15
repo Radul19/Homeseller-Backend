@@ -64,6 +64,7 @@ controller.register = async (req, res) => {
     const { email, username, password } = req.body
 
     //User or Company
+    //ok
     let type = "users"
     let boolType = true
     if (!req.body.type) {
