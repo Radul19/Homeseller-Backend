@@ -32,4 +32,8 @@ router.get("/getItem/:id",getItem)
 
 router.get("/getAllItems",getAllItem)
 
+router.get("/",(req,res)=>{
+    res.send("working")
+})
+
 module.exports = router
