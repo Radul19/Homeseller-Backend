@@ -2,8 +2,16 @@ const db = require("./database")
 const bcrypt = require("bcrypt")
 const { v4 } = require('uuid');
 const fs = require('fs')
+require("dotenv")
 // const urlServer = "localhost:4000/"
-const urlServer = "home-seller-back.herokuapp.com/"
+// const urlServer = "home-seller-back.herokuapp.com/"
+
+const cloudinary = require("cloudinary").v2
+cloudinary.config({
+    cloud_name: "homesellerapp",
+    api_key: 317699299852547,
+    api_secret: "8MwOkn2RLuQxxJ7gOzDKuif2ofs",
+})
 
 /// const result = await db.query('SELECT * FROM users WHERE id = $1', [id])
 /// res.send(result.rows[0])
@@ -119,7 +127,7 @@ controller.register = async (req, res) => {
 }
 
 controller.getUser = async (req, res) => {
-    
+
     try {
         // console.log(req.params.id)
         const result = await db.query(`SELECT * FROM users WHERE id = $1 `, [req.params.id])
@@ -133,7 +141,6 @@ controller.getUser = async (req, res) => {
                     msg: "No se ha encontrado el usuario que busca"
                 })
             } else {
-                console.log("waht")
                 let posts = result3.rows
                 // console.log(result3)
                 if (result3.rows[0] === undefined) {
@@ -141,7 +148,7 @@ controller.getUser = async (req, res) => {
                 }
                 const { email, id, name, description } = result2.rows[0]
                 res.json({
-                    email, id, name, description , posts
+                    email, id, name, description, posts
                 })
             }
         } else {
@@ -228,16 +235,41 @@ controller.editData = async (req, res) => {
 }
 
 controller.createItem = async (req, res) => {
-    const { title, price, generaldescription, type, owner } = req.body
-    let aux = JSON.parse(req.body.aux)
-    const comments = JSON.stringify([])
-    console.log(comments)
-    const id = v4()
-    aux.map((item, index) => {
-        item.url = urlServer + "uploads/" + req.files[index].filename
-    })
-    aux = JSON.stringify(aux)
     try {
+        const { title, price, generaldescription, type, owner } = req.body
+        let aux = JSON.parse(req.body.aux)
+        const comments = JSON.stringify([])
+        console.log(comments)
+        const id = v4()
+
+
+        ///Cloudinary
+        // aux.map(async (item, index) => {
+        //     const result = await cloudinary.uploader.upload(req.files[index].path)
+        //     item.url = result.url
+        //     console.log(result)
+        // })
+        console.log("//////////////////////////////////////////////////")
+        await Promise.all(
+            aux.map(async (item, index) => {
+                const {path} = req.files[index]
+                const result = await cloudinary.uploader.upload(path)
+                item.url = result.url
+                fs.unlinkSync(path)
+                console.log(result)
+                return 0
+            })
+        )
+        console.log("//////////////////////////////////////////////////")
+
+        // aux.map((item, index) => {
+        //     item.url = urlServer + "uploads/" + req.files[index].filename
+        // })
+
+        // const a = await cloudinary.uploader.upload(req.files[0].path)
+        // console.log(a)
+
+        aux = JSON.stringify(aux)
         const result = await db.query(`INSERT INTO posts (title , generaldescription , price ,id ,  comments , images,type,owner) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) `,
             [title, generaldescription, parseInt(price), id, comments, aux, type, owner])
         if (result.rowCount > 0) {
