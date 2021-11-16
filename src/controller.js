@@ -68,7 +68,6 @@ controller.login = async (req, res) => {
 }
 
 controller.register = async (req, res) => {
-    console.log("trying")
     // setTimeout(async() => {
     const { email, username, password } = req.body
 
@@ -235,6 +234,7 @@ controller.editData = async (req, res) => {
 }
 
 controller.createItem = async (req, res) => {
+    console.log("trying")
     try {
         const { title, price, generaldescription, type, owner } = req.body
         let aux = JSON.parse(req.body.aux)
@@ -253,6 +253,7 @@ controller.createItem = async (req, res) => {
         await Promise.all(
             aux.map(async (item, index) => {
                 const {path} = req.files[index]
+                console.log(path)
                 const result = await cloudinary.uploader.upload(path)
                 item.url = result.url
                 fs.unlinkSync(path)
