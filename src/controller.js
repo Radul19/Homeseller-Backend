@@ -220,18 +220,15 @@ controller.editData = async (req, res) => {
 /// Crea una publicacion
 controller.createItem = async (req, res) => {
     /* Aqui hay muchos detalles a tomar en cuenta, como estas enviando un conjunto de imagenes, se reciben en req.file gracias a Multer
-    pero para enviar toda esta informacion, necesitas hacer una variable "FormData" desde el front, y no te permite enviar archivos JSON
-    
-    Los datos estan almacenados en objetos
-    
+    pero para enviar toda esta informacion, necesitas hacer una variable "FormData" desde el front y enviarla, asi separas la info de las imagenes
     */
     try {
         /// Extrae todos los datos del req.body
         const { title, price, generaldescription, type, owner } = req.body
-        /// Extrae 
+        /// Extrae la informacion de las imagenes , y como son un array[{object}], se necesita hacer un JSON.parse() para que
+        /// los datos de los objetos no se pierdan
         let copyData = JSON.parse(req.body.copyData)
         const comments = JSON.stringify([])
-        console.log(comments)
         const id = v4()
         await Promise.all(
             copyData.map(async (item, index) => {
@@ -266,9 +263,7 @@ controller.createItem = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-        req.files.forEach(element => {
-            fs.unlinkSync(element.path)
-        });
+
         res.status(599).json({
             ok: false,
             msg: 'Por favor hable con el administrador'
