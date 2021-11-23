@@ -362,7 +362,8 @@ controller.updateProfilePic = async (req, res) => {
         fs.unlinkSync(path)
         if (resultdb.rowCount > 0) {
             res.json({
-                ok: true
+                ok: true,
+                url: result.url
             })
         } else {
             /// Si no se pudo registrar el url borra la foto en cloudinary
