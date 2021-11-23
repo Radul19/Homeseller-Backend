@@ -229,6 +229,7 @@ controller.createItem = async (req, res) => {
         /// los datos de los objetos no se pierdan
         let copyData = JSON.parse(req.body.copyData)
         const comments = JSON.stringify([])
+        const dates = JSON.stringify([])
         const id = v4()
         await Promise.all(
             copyData.map(async (item, index) => {
@@ -243,8 +244,8 @@ controller.createItem = async (req, res) => {
             })
         )
         copyData = JSON.stringify(copyData)
-        const result = await db.query(`INSERT INTO posts (title , generaldescription , price ,id ,  comments , images,type,owner,views) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9) `,
-            [title, generaldescription, parseInt(price), id, comments, copyData, type, owner, 0])
+        const result = await db.query(`INSERT INTO posts (title , generaldescription , price ,id ,  comments , images,type,owner,views,dates) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) `,
+            [title, generaldescription, parseInt(price), id, comments, copyData, type, owner, 0,dates])
         if (result.rowCount > 0) {
             res.json({
                 ok: true,
@@ -263,7 +264,6 @@ controller.createItem = async (req, res) => {
     }
     catch (err) {
         console.log(err)
-
         res.status(599).json({
             ok: false,
             msg: 'Por favor hable con el administrador'
@@ -440,5 +440,64 @@ controller.plusView = async (req, res) => {
         });
     }
 }
+
+controller.setDate = async(req,res)=>{
+    ///select * from posts WHERE images @> '[{"title": "Front picture"}]'
+    const {id} = req.body
+    const dates = JSON.stringify(req.body.dates)
+    try {
+        const result = await db.query("UPDATE posts SET dates = $1 WHERE id = $2", [dates,id])
+        console.log(result)
+        if (result.rowCount > 0) {
+            res.json({
+                ok: true
+            })
+        } else {
+            res.status(400).json({
+                ok: false,
+                msg: 'Ha ocurrido un error al intentar registrar la cita, porfavor intentelo nuevamente'
+            });
+        }
+    } catch (err) {
+        console.log(err);
+        res.status(599).json({
+            ok: false,
+            msg: 'Por favor hable con el administrador'
+        });
+    }
+}
+
+controller.getDates = async(req,res)=>{
+    const {id,type} = req.params
+    try {
+        let result
+        if(type == 1){
+            result = await db.query(`SELECT * FROM posts WHERE dates @> '[{ "guest" : "${id}" }]' `)
+        }else if(type == 2){
+            result = await db.query(`SELECT * FROM posts WHERE dates @> '[{ "owner" : "${id}" }]' `)
+        }
+        res.json(result.rows)
+    } catch (err) {
+        console.log(err);
+        res.status(599).json({
+            ok: false,
+            msg: 'Por favor hable con el administrador'
+        });
+    }
+}
+
+// controller.getPostDates = async (req,res)=>{
+//     const {id} = req.params
+//     try {
+//         const result = await db.query(`SELECT * FROM posts WHERE dates @> '[{ "postId" : "${id}" }]' `)
+//         res.json(result.rows)
+//     } catch (err) {
+//         console.log(err);
+//         res.status(599).json({
+//             ok: false,
+//             msg: 'Por favor hable con el administrador'
+//         });
+//     }
+// }
 
 module.exports = controller

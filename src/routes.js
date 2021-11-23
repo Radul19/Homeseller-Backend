@@ -1,7 +1,7 @@
 const {Router} = require("express")
 const multer = require("multer")
 
-const { login, register, getUser, editData, createItem, getItem, getAllItem, deleteItem, updateProfilePic,sendComment, search, plusView } = require("./controller")
+const { login, register, getUser, editData, createItem, getItem, getAllItem, deleteItem, updateProfilePic,sendComment, search, plusView, setDate, getDates,getPostDates } = require("./controller")
 
 const router = Router()
 
@@ -45,5 +45,10 @@ router.post("/sendComment",sendComment)
 router.get("/search/:data",search)
 
 router.get("/plusView/:id",plusView)
+
+router.post("/setDate",setDate)
+
+router.get("/getDates/:id/:type",getDates)
+// router.get("/getPostDates/:id",getPostDates)
 
 module.exports = router
