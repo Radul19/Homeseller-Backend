@@ -11,10 +11,10 @@ const {Pool} = require("pg")
 // }
 
 const config = {
-    user: 'uaklxadebgjtbw',
-    host: 'ec2-34-198-189-252.compute-1.amazonaws.com',
-    password: "3ef1d753908f01ad91990def65c06d3a93d91326060645ca1c716bb469d6a3cb",
-    database: 'ddfq44vngru7o5',
+    user: '#################',
+    host: '##################',
+    password: "########################################",
+    database: '################',
     port:'5432',
     ssl: {
     rejectUnauthorized: false,
